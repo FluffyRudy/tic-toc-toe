@@ -20,6 +20,18 @@ board = (function createBoard(){
             }
         }
 
+        function clearBoard() {
+            for (let row = 0; row < NUM_ROWS; row++) {
+                for (let col = 0; col < NUM_COLS; col++) {
+                    boardInstance[row][col] = '';
+                }
+            }            
+            for (let elem of playground.children) {
+                if (elem.firstChild)
+                    elem.removeChild(elem.firstChild);
+            }
+        }
+
         function update(cellNum, playerMarker) {
             const parsedCellNum  = parseInt(cellNum);
             const {row, col}     = positionTocell(parsedCellNum);
@@ -37,7 +49,7 @@ board = (function createBoard(){
         }
 
         return Object.assign(
-            {playground, boardInstance, update, cellToPosition}, 
+            {playground, boardInstance, clearBoard, update, cellToPosition}, 
             {dimension: [NUM_ROWS, NUM_COLS]}
         );
     }
@@ -164,12 +176,34 @@ function aiMove() {
         board.update(position, 'O');
     }
 }
- 
-function makeMoves(e) {
+
+function play(e) {
     if (!e.target.classList.contains('cell') ||  e.target.children.length > 0)
         return
     humanMove(e.target);
-    aiMove();
+    board.playground.style.pointerEvents = "none";
+    setTimeout(() => {
+        aiMove();
+
+    }, 500)
+    setTimeout(() => {
+        gameOver();
+        board.playground.style.pointerEvents = '';
+    }, 600);
+}
+
+function gameOver() {
+    if (humanWin('X', board.boardInstance)) {
+        alert("Human Won");
+    } else if (computerWin('O', board.boardInstance)) {
+        alert("Computer Won");
+    } else if (!getEmptyCells(board.boardInstance).length) {
+        alert("its tie");
+    } else {
+        return false;
+    }
+    board.clearBoard();
+    return true;
 }
 
 function checkWinning(player, state) {
@@ -199,4 +233,4 @@ function computerWin(marker, state) {
     return checkWinning(marker, state)
 }
 
-board.playground.addEventListener('click', makeMoves);
+board.playground.addEventListener('click', play);
