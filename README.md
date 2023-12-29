@@ -7,7 +7,7 @@ This is a simple yet fun Tic-Tac-Toe game implemented in JavaScript. The game al
 ## Features
 
 - Human vs AI gameplay.
-- Three difficulty modes: Easy, Medium, and Impossible.
+- Three difficulty modes: Easy, Medium, and Difficult.
 - AI checks if it can win in the next move, and if not, it checks if the human player can win in the next move to block it. If neither of these conditions are met, it either takes the center spot or chooses a random available position.
 - The game board is dynamically generated.
 - The game state is updated after each move.
