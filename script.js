@@ -59,7 +59,7 @@ board = (function createBoard(){
 
 function createCell(cellID) {
     const cell = document.createElement('div');
-    cell.style.backgroundColor = "#fff";
+    cell.style.backgroundColor = "#000";
     cell.setAttribute('cellID', `${cellID}`);
     cell.classList.add('cell');
     return cell;
@@ -82,6 +82,8 @@ function styleMarker(target, markerSprite) {
     markerElem.style.height = `${Math.floor(target.clientHeight/2)}px`;
     markerElem.style.display = "block";
     markerElem.style.margin = `${Math.floor(target.clientHeight/4)}px auto`;
+    markerElem.classList.add('animate-marker');
+    markerElem.classList.add('marker-o');
     return markerElem;
 }
 
@@ -185,11 +187,11 @@ function play(e) {
     setTimeout(() => {
         aiMove();
 
-    }, 500)
+    }, 1000)
     setTimeout(() => {
         gameOver();
         board.playground.style.pointerEvents = '';
-    }, 600);
+    }, 1100);
 }
 
 function gameOver() {
