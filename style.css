@@ -39,6 +39,20 @@ body {
             animation: marker-anim 1s ease-in infinite;
 }
 
+dialog {
+    margin: auto;
+    font-size: 40px;
+    background-color: tomato;
+    border-radius: 10px;
+    width: min(300px, 100vw);
+    height: min(300px, 100vh);
+    text-align: center;
+    line-height: min(300px, 100vh);
+    overflow-y: hidden;
+    color: #fff;
+    text-shadow: 1px 1px 10px lime;
+}
+
 @-webkit-keyframes marker-anim {
     0% {
         transform: rotate(0deg);

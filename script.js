@@ -1,6 +1,6 @@
 board = (function createBoard(){
-    const NUM_ROWS  = 3;
-    const NUM_COLS  = 3;
+    const NUM_ROWS   = 3;
+    const NUM_COLS   = 3;
     const playground = document.getElementById("playground");
     let boardInstance;
 
@@ -30,6 +30,8 @@ board = (function createBoard(){
                 if (elem.firstChild)
                     elem.removeChild(elem.firstChild);
             }
+
+            disablePointerEvents();
         }
 
         function update(cellNum, playerMarker) {
@@ -57,6 +59,11 @@ board = (function createBoard(){
     return createBoard()
 })()
 
+const marker = {
+    'human': 'X',
+    'computer': 'O'
+};
+
 function createCell(cellID) {
     const cell = document.createElement('div');
     cell.style.backgroundColor = "#000";
@@ -66,9 +73,9 @@ function createCell(cellID) {
 }
 
 function getMarkerSprite(markerType) {
-    if (markerType == 'O')
+    if (markerType == marker.computer)
         return './assets/marker-o.png';
-    else if (markerType == 'X')
+    else if (markerType == marker.human)
         return './assets/marker-x.png';
     return null;
 }
@@ -87,10 +94,10 @@ function styleMarker(target, markerSprite) {
     return markerElem;
 }
 
-function updateBoard(target, marker) {
-    const markerSprite = styleMarker(target, getMarkerSprite(marker))
+function updateBoard(target, player) {
+    const markerSprite = styleMarker(target, getMarkerSprite(player))
     target.appendChild(markerSprite);
-    board.update(target.getAttribute('cellID'), marker);
+    board.update(target.getAttribute('cellID'), player);
 }
 
 function getEmptyCells(state) {
@@ -131,7 +138,7 @@ function getNewState(marker, pos) {
 }
 
 function humanMove(target) {
-    updateBoard(target, 'X');
+    updateBoard(target, marker.human);
 }
 
 function aiMove() {
@@ -140,27 +147,27 @@ function aiMove() {
         return
 
     const maximizingStates = avilablePos.map(pos => {
-        return getNewState('O', pos);
+        return getNewState(marker.computer, pos);
     })
     for (let i = 0; i < maximizingStates.length; i++) {
-        if (checkWinning('O', maximizingStates[i])) {
+        if (checkWinning(marker.computer, maximizingStates[i])) {
             const [row, col] = avilablePos[i];
             const position   = board.cellToPosition(row, col);
-            updateBoard(board.playground.children[position-1], 'O');
-            board.update(position, 'O');
+            updateBoard(board.playground.children[position-1], marker.computer);
+            board.update(position, marker.computer);
             return;
         }
     }
 
     const minimizingStates = avilablePos.map(pos => {
-        return getNewState('X', pos);
+        return getNewState(marker.human, pos);
     })
     for (let i = 0; i < minimizingStates.length; i++) {
-        if (checkWinning('X', minimizingStates[i])) {
+        if (checkWinning(marker.human, minimizingStates[i])) {
             const [row, col] = avilablePos[i];
             const position   = board.cellToPosition(row, col);
-            updateBoard(board.playground.children[position-1], 'O');
-            board.update(position, 'O');
+            updateBoard(board.playground.children[position-1], marker.computer);
+            board.update(position, marker.computer);
             return;
         }
     }
@@ -168,45 +175,17 @@ function aiMove() {
     if (board.boardInstance[1][1] == '') {
         const [row, col] = [1, 1];
         const position   = board.cellToPosition(row, col);
-        updateBoard(board.playground.children[position-1], 'O');
-        board.update(position, 'O');
+        updateBoard(board.playground.children[position-1], marker.computer);
+        board.update(position, marker.computer);
     }
     else {
         const [row, col] = avilablePos[randint(0, avilablePos.length-1)];
         const position   = board.cellToPosition(row, col);
-        updateBoard(board.playground.children[position-1], 'O');
-        board.update(position, 'O');
+        updateBoard(board.playground.children[position-1], marker.computer);
+        board.update(position, marker.computer);
     }
 }
 
-function play(e) {
-    if (!e.target.classList.contains('cell') ||  e.target.children.length > 0)
-        return
-    humanMove(e.target);
-    board.playground.style.pointerEvents = "none";
-    setTimeout(() => {
-        aiMove();
-
-    }, 1000)
-    setTimeout(() => {
-        gameOver();
-        board.playground.style.pointerEvents = '';
-    }, 1100);
-}
-
-function gameOver() {
-    if (humanWin('X', board.boardInstance)) {
-        alert("Human Won");
-    } else if (computerWin('O', board.boardInstance)) {
-        alert("Computer Won");
-    } else if (!getEmptyCells(board.boardInstance).length) {
-        alert("its tie");
-    } else {
-        return false;
-    }
-    board.clearBoard();
-    return true;
-}
 
 function checkWinning(player, state) {
     const win_states = [
@@ -227,12 +206,74 @@ function checkWinning(player, state) {
     })
 }
 
-function humanWin(marker, state) {
-    return checkWinning(marker, state);
+function makeMove(player, target) {
+    if (player == marker.human) {
+        humanMove(target);
+        disablePointerEvents();
+    } else {
+        aiMove();
+        enablePointerEvents();
+    }
 }
 
-function computerWin(marker, state) {
-    return checkWinning(marker, state)
+function checkGameOver(player) {
+    if (checkWinning(player, board.boardInstance))
+        return true;
+    return false;
+}
+
+function updateStausMessage(player=null) {
+    let message;
+    const dialogElem = document.querySelector('dialog');
+    
+    if (player === marker.player) {
+        message = 'Human Won';
+    } else if (player === marker.computer) {
+        message = 'Computer Won';
+    } else {
+        message = 'Its Tie. Nobody won';
+    }
+
+    dialogElem.textContent = message;
+    dialogElem.showModal();
+
+    setTimeout( () => {
+        dialogElem.close();
+        enablePointerEvents();
+    }, 2000);
+}
+
+function play(e) {
+    if (!e.target.classList.contains('cell') ||  e.target.children.length > 0)
+        return
+    makeMove(marker.human, e.target);
+    disablePointerEvents();
+    if (checkGameOver(marker.human)) {
+        updateStausMessage(marker.human);
+        board.clearBoard();
+    }
+    else {
+        makeMove(marker.computer);
+        if (checkGameOver(marker.computer)) {
+            updateStausMessage(marker.computer);
+            setTimeout(board.clearBoard, 2000);
+        }
+    }
+
+    if (getEmptyCells(board.boardInstance).length === 0) {
+        board.clearBoard();
+        updateStausMessage();
+    }
+    enablePointerEvents();
+
+}
+
+function disablePointerEvents() {
+    board.playground.style.pointerEvents = 'none';
+}
+
+function enablePointerEvents() {
+    board.playground.style.pointerEvents = '';
 }
 
 board.playground.addEventListener('click', play);
