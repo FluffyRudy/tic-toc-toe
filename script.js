@@ -30,8 +30,6 @@ board = (function createBoard(){
                 if (elem.firstChild)
                     elem.removeChild(elem.firstChild);
             }
-
-            disablePointerEvents();
         }
 
         function update(cellNum, playerMarker) {
