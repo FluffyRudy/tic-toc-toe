@@ -228,7 +228,7 @@ function updateStausMessage(player=null) {
     } else if (player === marker.computer) {
         message = 'Computer Won';
     } else {
-        message = 'Its Tie. Nobody won';
+        message = 'Its Tie';
     }
 
     dialogElem.textContent = message;
