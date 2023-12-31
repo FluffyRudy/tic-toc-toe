@@ -242,7 +242,6 @@ function updateStausMessage(player=null) {
 function play(e) {
     if (!e.target.classList.contains('cell') ||  e.target.children.length > 0)
         return
-    enablePointerEvents();
     makeMove(marker.human, e.target);
     disablePointerEvents();
     if (checkGameOver(marker.human)) {
@@ -261,6 +260,7 @@ function play(e) {
         board.clearBoard();
         updateStausMessage();
     }
+    enablePointerEvents();
 }
 
 function disablePointerEvents() {
