@@ -26,11 +26,7 @@ body {
 
 .marker-o {
     border-radius: 50%;
-    border-top: 1px solid red;
-    border-right: 1xp solid hotpink;
-    border-bottom: 1px solid lime;
-    border-left: 1px solid darkcyan;
-    box-shadow: 1px 1px 15px gold;
+    box-shadow: 8px 0px 0px 0px #DCD0C0, 0px 8px 0px 0px #B1938B, -8px 0px 0px 0px #4E4E56, 0px 0px 0px 8px #DA635D, 5px 5px 15px 5px rgba(0,0,0,0);
 }
 
 .animate-marker {
