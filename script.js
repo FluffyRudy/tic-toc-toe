@@ -25,7 +25,7 @@ board = (function createBoard(){
                 for (let col = 0; col < NUM_COLS; col++) {
                     boardInstance[row][col] = '';
                 }
-            }            
+            }
             for (let elem of playground.children) {
                 if (elem.firstChild)
                     elem.removeChild(elem.firstChild);
@@ -49,7 +49,7 @@ board = (function createBoard(){
         }
 
         return Object.assign(
-            {playground, boardInstance, clearBoard, update, cellToPosition}, 
+            {playground, boardInstance, clearBoard, update, cellToPosition},
             {dimension: [NUM_ROWS, NUM_COLS]}
         );
     }
@@ -194,7 +194,7 @@ function checkWinning(player, state) {
         [state[0][1], state[1][1], state[2][1]],
         [state[0][2], state[1][2], state[2][2]],
         [state[0][0], state[1][1], state[2][2]],
-        [state[2][0], state[1][1], state[0][2]]  
+        [state[2][0], state[1][1], state[0][2]]
     ]
 
     return win_states.some(state => {
@@ -222,7 +222,7 @@ function checkGameOver(player) {
 function updateStausMessage(player=null) {
     let message;
     const dialogElem = document.querySelector('dialog');
-    
+
     if (player === marker.player) {
         message = 'Human Won';
     } else if (player === marker.computer) {
@@ -271,4 +271,7 @@ function enablePointerEvents() {
     board.playground.style.pointerEvents = '';
 }
 
-board.playground.addEventListener('click', play);
+window.onload = () => {
+    document.body.style.opacity = "1";
+    board.playground.addEventListener('click', play);
+}
